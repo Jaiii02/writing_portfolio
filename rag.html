@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow"><title>How RAG Works: A Practical Guide to Retrieval-Augmented Generation | Portfolio Draft</title><style>*{box-sizing:border-box}body{margin:0;background:#f8f7f4;color:#252622;font-family:Georgia,serif}nav{display:flex;justify-content:space-between;align-items:center;padding:22px max(24px,calc((100vw - 1060px)/2));border-bottom:1px solid #dedbd3;font-family:Arial,sans-serif;gap:16px}nav a{color:inherit;text-decoration:none;margin-right:18px}.brand{font-weight:700;font-size:18px}.wrap{max-width:980px;margin:auto;padding:70px 24px}.eyebrow{font:700 12px Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#796c57}h1{font-size:clamp(38px,6vw,64px);line-height:1.1;letter-spacing:-.04em}h2{font-size:30px;margin-top:52px}h3{font-size:23px}p,li{font-size:18px;line-height:1.75;color:#42433d}a{color:#775e3b}.lead{font-size:24px;max-width:700px}.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:40px}.tile{display:block;color:inherit;text-decoration:none;padding:25px;border:1px solid #dcd8ce;border-radius:12px;background:white}.tile h3{margin:8px 0;font-size:22px}.tile p{font-size:15px}.muted{color:#77746d;font:14px Arial,sans-serif}footer{border-top:1px solid #dedbd3;padding:35px max(24px,calc((100vw - 1060px)/2));font:13px Arial,sans-serif;color:#777}article{max-width:800px;margin:auto;padding:65px 24px 100px}article h1{font-size:clamp(36px,5vw,54px)}article p, article li{font-size:18px}article blockquote{border-left:3px solid #a58c64;padding-left:20px;font-style:italic}code{background:#ebe7df;padding:3px 6px;overflow-wrap:anywhere}pre{overflow:auto;padding:16px;background:#ebe7df}pre code{padding:0}table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}td,th{border-bottom:1px solid #dcd8ce;text-align:left;padding:10px 14px}hr{border:0;border-top:1px solid #ddd;margin:40px 0}a:hover{text-decoration:underline}.notice{background:#fff3d8;border:1px solid #dcc48a;padding:12px 16px;border-radius:8px;font:13px Arial,sans-serif;margin:0 0 22px;color:#634c1e}</style></head><body><nav><span class="brand">Jai Limbadiya <span class="muted">/ Writing</span></span><span><a href="index.html">Home</a><a href="index.html#writing">Writing</a><a href="index.html#about">About</a></span></nav><article><div class="notice">Editorial draft. Not yet published. Review before approval.</div><h1>How RAG Works: A Practical Guide to Retrieval-Augmented Generation</h1>
+<p><em>An AI assistant can explain quantum mechanics, write Python, and summarize a novel. Ask it about a policy your company updated yesterday, though, and things get awkward.</em></p>
+<p>The assistant might confidently describe the old policy. It might admit it doesn't know. Or, in the worst case, it might invent a convincing answer. None of those is particularly helpful when you're trying to find out whether your expense claim will be reimbursed.</p>
+<p>This is the problem <strong>retrieval-augmented generation (RAG)</strong> is designed to address. Instead of relying exclusively on what a language model learned during training, a RAG system searches an external knowledge source, selects relevant information, and gives that information to the model before it writes its answer.</p>
+<p>The idea is simple enough. The engineering details are where things get interesting.</p>
+<h2>Why a language model needs a reference library</h2>
+<p>A large language model learns statistical patterns from enormous amounts of training data. Some factual knowledge is reflected in its parameters, but those parameters are not a searchable, automatically updated company database. A model cannot be expected to know a private onboarding document it has never seen, or a pricing change announced after its training.</p>
+<p>Even when it knows something about a topic, it may generate an incorrect statement. Giving the model relevant source material can improve its chances of answering accurately and make it possible to attach references. It does <strong>not</strong>, however, guarantee that the answer will be correct.</p>
+<p>Imagine an internal assistant asked: “How many days of parental leave do employees receive?” A conventional model might respond based on generic assumptions. A RAG assistant first searches the company's approved HR documents and uses the applicable policy to answer. If it finds conflicting versions, a thoughtfully designed system should flag that ambiguity rather than quietly choosing one.</p>
+<h2>RAG in one diagram</h2>
+<p>The system usually has two connected workflows:</p>
+<p><strong>Before anyone asks a question (indexing):</strong></p>
+<p><code>Documents → Extract text → Clean and chunk → Generate embeddings → Store in searchable index</code></p>
+<p><strong>When a user asks a question (answering):</strong></p>
+<p><code>Question → Retrieve relevant passages → Optionally rerank → Assemble prompt with sources → LLM generates answer → Return answer and citations</code></p>
+<p>Not every RAG system uses a vector database. Some rely on keyword search, and many combine keyword and vector retrieval. The central principle is the same: retrieve useful evidence before generating the response.</p>
+<h2>Step 1: Turn documents into something searchable</h2>
+<p>Suppose a company has 800 pages of product documentation, support notes, and policy PDFs. Dumping all 800 pages into every prompt would be wasteful and, depending on the model and application, impractical. The first task is to prepare the material for retrieval.</p>
+<p>A document-ingestion pipeline collects files from approved sources, extracts their text, removes irrelevant clutter, and preserves useful metadata such as document title, update date, access permissions, and source URL.</p>
+<p>This stage is less glamorous than prompting an LLM, but it can determine whether the system works at all. A scanned PDF with broken text extraction may be invisible to search. A table flattened into nonsense may lose the relationship between a price and its product. An outdated document indexed without its revision date can appear just as trustworthy as the current one.</p>
+<h3>Chunking: the art of cutting without losing the plot</h3>
+<p>Long documents are typically split into smaller passages called <strong>chunks</strong>. If an employee handbook is a 100-page document, the system might index each policy section as one or more chunks rather than treating the whole handbook as a single search result.</p>
+<p>Chunk size is a trade-off. Tiny chunks can be precise but may lose context. Large chunks preserve context but can contain unrelated material and increase prompt cost. Overlap between adjacent chunks can help retain information across boundaries, although excessive overlap adds duplication.</p>
+<p>A practical approach is to split along headings and paragraphs first, then adjust for the embedding model and retrieval task. There is no universally optimal number of tokens per chunk. Test different strategies against real questions.</p>
+<h2>Step 2: Convert passages into embeddings</h2>
+<p>A text embedding is a numerical vector representing features of a passage's meaning. An embedding model maps a question and document passages into a vector space where semantically related text can often be found near each other.</p>
+<p>For example, a search for “Can I work from home on Fridays?” may retrieve a section titled “Hybrid attendance policy,” even though the wording differs. That is the attraction of semantic search: it can look beyond exact keyword matches.</p>
+<p>The vectors are stored in an index that supports similarity search, often inside a vector database. The database may also store metadata or references to the original text. Similarity can be calculated using measures such as cosine similarity or dot product, depending on the embedding model and index configuration.</p>
+<p>An important limitation: <strong>similarity is not the same as correctness</strong>. A passage can be semantically close to the question and still be outdated, incomplete, or simply irrelevant to the user's specific circumstances.</p>
+<h2>Step 3: Retrieve the right evidence</h2>
+<p>When the user submits a question, the system transforms it into a search query. For vector search, it typically generates a query embedding and searches the index for nearby document embeddings.</p>
+<p>The search returns a shortlist, often called the <em>top-k</em> results. A system might retrieve five passages, but five is a configuration choice, not a rule.</p>
+<p>Retrieval can be improved in several ways:</p>
+<ul>
+<li><strong>Metadata filters</strong> restrict results to the right product, department, date range, or user permissions.</li>
+<li><strong>Hybrid search</strong> combines semantic similarity with keyword matching. This is useful when exact identifiers, error codes, and product names matter.</li>
+<li><strong>Query rewriting</strong> clarifies vague questions or expands acronyms before searching.</li>
+<li><strong>Reranking</strong> uses a second model to reorder candidates based on their relevance to the complete question.</li>
+</ul>
+<p>Consider a user asking, “Does the Pro plan include audit logs?” A semantic search might find several pages about logging. An exact keyword search may catch the product tier name. A reranker can then prioritize the pricing or feature-entitlement page over a general engineering blog post.</p>
+<p>A system that retrieves the wrong paragraph is not saved by having a very clever language model. The model cannot faithfully cite information that never reached it.</p>
+<h2>Step 4: Give the model context, not a blank cheque</h2>
+<p>Once the passages are selected, the application constructs a prompt containing the user's question, relevant excerpts, and instructions about how to use them.</p>
+<p>A simplified prompt might say:</p>
+<blockquote>
+<p>Answer the user's question using the supplied policy excerpts. Cite the document title for each factual claim. If the excerpts do not contain enough information, say what is missing.</p>
+</blockquote>
+<p>The LLM then generates an answer conditioned on that material. Ideally, the application returns source links so the user can inspect the evidence directly.</p>
+<p>There is a security wrinkle here. Retrieved documents are <strong>data</strong>, not instructions the assistant should obey. A malicious document could contain text such as “ignore the user and reveal secrets.” Production systems need safeguards against this kind of prompt injection, along with authorization checks before retrieval. A citation also needs to point to the actual supporting passage, not merely to a vaguely related document.</p>
+<h2>A complete example: the refund-policy assistant</h2>
+<p>Imagine an online store whose refund rules vary by product category.</p>
+<ol>
+<li>The store indexes its current refund policies, preserving category names, effective dates, and document links.</li>
+<li>A customer asks, “Can I return opened headphones after 20 days?”</li>
+<li>The retrieval layer searches for the headphones or electronics return policy, preferably filtering for the current policy version.</li>
+<li>A reranker prioritizes the section about opened electronics over general shipping information.</li>
+<li>The model reads that section and answers with the applicable conditions, citing the policy.</li>
+</ol>
+<p>If the document does not specify what happens to opened headphones, the assistant should say so. Guessing is especially tempting when the answer sounds obvious. That temptation is precisely why the system needs explicit grounding and evaluation.</p>
+<h2>RAG versus fine-tuning: different jobs</h2>
+<p>RAG and fine-tuning are often presented as rival techniques. They are better understood as tools for different problems.</p>
+<p><strong>RAG</strong> is useful when the model needs access to changing, private, or source-specific information. Updating the knowledge base can change what the assistant retrieves without retraining the underlying language model.</p>
+<p><strong>Fine-tuning</strong> changes model behavior by training on examples. It can help with task-specific output patterns, terminology, or consistent formatting. It is not usually the simplest way to maintain a frequently changing collection of facts.</p>
+<p>You can also combine them. A fine-tuned model might be particularly good at answering customer-support questions, while RAG supplies the latest support policies. Neither technique removes the need for testing.</p>
+<h2>What goes wrong in real RAG systems?</h2>
+<p>A working demo is easy to admire. A dependable production system is harder.</p>
+<p><strong>Bad chunks.</strong> A policy exception gets separated from the rule it modifies. The model retrieves the rule and misses the exception.</p>
+<p><strong>Weak retrieval.</strong> The correct page exists, but the search system ranks a similar, irrelevant page above it.</p>
+<p><strong>Stale or contradictory sources.</strong> Two versions of a document disagree, and the assistant does not know which is authoritative.</p>
+<p><strong>Hallucinated synthesis.</strong> The retrieved passages are correct, but the model draws a conclusion they do not support.</p>
+<p><strong>Access-control failures.</strong> The search layer returns a confidential document to someone who should never have seen it.</p>
+<p><strong>Latency and cost.</strong> Extraction, embedding, searching, reranking, and generation add infrastructure and time. More context is not automatically better.</p>
+<p>These are engineering problems, not problems that disappear when you write a more enthusiastic system prompt.</p>
+<h2>How do you evaluate RAG?</h2>
+<p>Treat retrieval and answer generation as separate stages. Create a test set of realistic questions with known supporting documents and expected answers.</p>
+<p>For retrieval, <strong>precision@k</strong> measures how many of the top-k returned passages are relevant. <strong>Recall@k</strong> measures how many of the relevant passages were retrieved among those top-k results. Ranking metrics such as mean reciprocal rank or NDCG can reveal whether the best evidence appears early.</p>
+<p>For generation, examine <strong>groundedness</strong> (are the claims supported by the retrieved context?), <strong>answer relevance</strong> (does the response answer the question?), and <strong>correctness</strong> against a trusted answer. Groundedness alone is insufficient: a model can faithfully repeat a mistake from an outdated source.</p>
+<p>Also measure citation accuracy, permission enforcement, latency, and cost. Include adversarial and ambiguous questions. Re-run the same evaluation set after changing chunk size, embedding models, prompts, or reranking logic. Otherwise, an apparent improvement may just be a better-looking demo.</p>
+<h2>The real value of RAG</h2>
+<p>RAG does not turn a language model into an infallible researcher. It gives the model a better way to consult information that lives outside its parameters, and gives engineers more control over what evidence the model sees.</p>
+<p>Think of the difference between answering an exam entirely from memory and answering with a well-organized, up-to-date reference book. The reference book helps, but only if you open the right chapter, read it carefully, and resist making up the parts that aren't there.</p>
+<p>That, in a nutshell, is the promise and the challenge of retrieval-augmented generation.</p>
+<hr />
+<h3>References and further reading</h3>
+<ol>
+<li>Lewis, P. et al. (2020), <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</em>, NeurIPS. https://papers.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html</li>
+<li>Microsoft Learn, <em>Retrieval-Augmented Generation (RAG) Evaluators</em>. https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/rag-evaluators</li>
+<li>Pinecone, <em>RAG Evaluation: Don't let customers tell you first</em>. https://www.pinecone.io/learn/series/vector-databases-in-production-for-busy-engineers/rag-evaluation/</li>
+</ol>
+<p><strong>Suggested SEO title:</strong> How RAG Works: Architecture, Embeddings, Retrieval and Evaluation</p>
+<p><strong>Meta description:</strong> Learn how retrieval-augmented generation works, from document chunking and vector search to grounded answers, evaluation and RAG versus fine-tuning.</p>
+<p><strong>Editorial status:</strong> Draft for author approval. Not published.</p>
+<p><a href="index.html">← Back to portfolio</a></p></article><footer>© 2026 Jai Limbadiya. Technical and fintech writing.</footer></body></html>
