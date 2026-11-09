@@ -1,0 +1,128 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow"><title>How Market Makers Make Money: Bid-Ask Spreads Explained | Portfolio Draft</title><style>*{box-sizing:border-box}body{margin:0;background:#f8f7f4;color:#252622;font-family:Georgia,serif}nav{display:flex;justify-content:space-between;align-items:center;padding:22px max(24px,calc((100vw - 1060px)/2));border-bottom:1px solid #dedbd3;font-family:Arial,sans-serif;gap:16px}nav a{color:inherit;text-decoration:none;margin-right:18px}.brand{font-weight:700;font-size:18px}.wrap{max-width:980px;margin:auto;padding:70px 24px}.eyebrow{font:700 12px Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#796c57}h1{font-size:clamp(38px,6vw,64px);line-height:1.1;letter-spacing:-.04em}h2{font-size:30px;margin-top:52px}h3{font-size:23px}p,li{font-size:18px;line-height:1.75;color:#42433d}a{color:#775e3b}.lead{font-size:24px;max-width:700px}.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:40px}.tile{display:block;color:inherit;text-decoration:none;padding:25px;border:1px solid #dcd8ce;border-radius:12px;background:white}.tile h3{margin:8px 0;font-size:22px}.tile p{font-size:15px}.muted{color:#77746d;font:14px Arial,sans-serif}footer{border-top:1px solid #dedbd3;padding:35px max(24px,calc((100vw - 1060px)/2));font:13px Arial,sans-serif;color:#777}article{max-width:800px;margin:auto;padding:65px 24px 100px}article h1{font-size:clamp(36px,5vw,54px)}article p, article li{font-size:18px}article blockquote{border-left:3px solid #a58c64;padding-left:20px;font-style:italic}code{background:#ebe7df;padding:3px 6px;overflow-wrap:anywhere}pre{overflow:auto;padding:16px;background:#ebe7df}pre code{padding:0}table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}td,th{border-bottom:1px solid #dcd8ce;text-align:left;padding:10px 14px}hr{border:0;border-top:1px solid #ddd;margin:40px 0}a:hover{text-decoration:underline}.notice{background:#fff3d8;border:1px solid #dcc48a;padding:12px 16px;border-radius:8px;font:13px Arial,sans-serif;margin:0 0 22px;color:#634c1e}</style></head><body><nav><span class="brand">Jai Limbadiya <span class="muted">/ Writing</span></span><span><a href="index.html">Home</a><a href="index.html#writing">Writing</a><a href="index.html#about">About</a></span></nav><article><div class="notice">Editorial draft. Not yet published. Review before approval.</div><h1>How Market Makers Make Money: Bid-Ask Spreads Explained</h1>
+<p><em>You open a trading app and see a stock available for ₹100.10. But when you try to sell it immediately, the highest available buying price is only ₹100.00. Where did those ten paise go?</em></p>
+<p>They didn't disappear. You're looking at two different prices: the <strong>ask</strong> and the <strong>bid</strong>. The gap between them is the <strong>bid-ask spread</strong>, one of the simplest visible costs of trading and one of the potential sources of revenue for firms that supply liquidity to markets.</p>
+<p>The idea sounds easy: buy at ₹100, sell at ₹100.10, keep ₹0.10. If that were guaranteed, market making would be a fantastic business. Unfortunately for the market maker, financial markets have a habit of changing prices between the buying and the selling. That is where the real story begins.</p>
+<h2>Bid and ask: two prices for one asset</h2>
+<p>A <strong>bid</strong> is a price at which a buyer is willing to buy. An <strong>ask</strong>, also called an offer, is a price at which a seller is willing to sell.</p>
+<p>Suppose the best displayed quotes for a fictional stock are:</p>
+<table>
+<thead>
+<tr>
+  <th>Side</th>
+  <th style="text-align:right">Price</th>
+  <th style="text-align:right">Quantity displayed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Best bid</td>
+  <td style="text-align:right">₹100.00</td>
+  <td style="text-align:right">500 shares</td>
+</tr>
+<tr>
+  <td>Best ask</td>
+  <td style="text-align:right">₹100.10</td>
+  <td style="text-align:right">400 shares</td>
+</tr>
+</tbody>
+</table>
+<p>The quoted spread is:</p>
+<p><code>₹100.10 − ₹100.00 = ₹0.10 per share</code></p>
+<p>Relative to the midpoint, ₹100.05, that's roughly a 0.10% spread. The midpoint is a convenient reference, not necessarily a price at which you can immediately trade.</p>
+<p>If you submit an aggressive market buy order, it can execute against available offers, starting near the best ask. If you submit an aggressive market sell order, it can execute against available bids, starting near the best bid. Actual execution depends on the venue, order size, market state and routing arrangements.</p>
+<p>The spread isn't a fee displayed as a separate line item. It is embedded in the prices available for immediate execution.</p>
+<h2>Why have two prices at all?</h2>
+<p>Think of a used bookshop. The owner might offer you ₹200 for your old book and list it for ₹260 on the shelf. Part of the difference compensates the shop for time, inventory, uncertainty, rent and the chance that the book won't sell.</p>
+<p>A market maker plays a related, though much faster and more automated, role in financial markets. It posts prices at which it is willing to buy and sell, often repeatedly throughout the trading day. That willingness can help other participants trade without waiting for an exact opposite order to arrive at the same instant.</p>
+<p>If a trader needs to sell now, the market maker may buy. If another trader needs to buy later, the market maker may sell. The market maker temporarily bridges the mismatch in timing. That is <strong>liquidity provision</strong>.</p>
+<p>Different venues and asset classes have different rules. Some registered market makers have formal quoting obligations, while other liquidity providers supply quotes without the same designation. A market maker is not simply “anyone who places a limit order.”</p>
+<h2>Meet the order book</h2>
+<p>An <strong>order book</strong> organizes outstanding buy and sell interest, generally by price and subject to venue-specific priority rules. A simplified snapshot might look like this:</p>
+<table>
+<thead>
+<tr>
+  <th style="text-align:right">Buy orders (bids)</th>
+  <th style="text-align:right">Price</th>
+  <th style="text-align:right">Sell orders (asks)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td style="text-align:right">500 shares</td>
+  <td style="text-align:right">₹100.00</td>
+  <td style="text-align:right"></td>
+</tr>
+<tr>
+  <td style="text-align:right">800 shares</td>
+  <td style="text-align:right">₹99.95</td>
+  <td style="text-align:right"></td>
+</tr>
+<tr>
+  <td style="text-align:right"></td>
+  <td style="text-align:right">₹100.10</td>
+  <td style="text-align:right">400 shares</td>
+</tr>
+<tr>
+  <td style="text-align:right"></td>
+  <td style="text-align:right">₹100.15</td>
+  <td style="text-align:right">700 shares</td>
+</tr>
+</tbody>
+</table>
+<p>The best bid is the highest displayed buy price. The best ask is the lowest displayed sell price. Together they form the <strong>top of book</strong>.</p>
+<p>If you want to purchase 600 shares immediately, the 400 shares offered at ₹100.10 may not be enough. Depending on matching rules and other available liquidity, the rest may execute at ₹100.15 or another price. Your average execution price can therefore be worse than the first number shown on the screen. This is one form of <strong>slippage</strong>.</p>
+<p>Market makers often submit limit orders on both sides. Their orders sit in the book, waiting for someone to trade against them. They earn the opportunity to capture spread, but in exchange they accept the risk of getting filled when the market is about to move against them.</p>
+<h2>The textbook spread trade</h2>
+<p>Imagine a market maker posts a bid of ₹100.00 and an ask of ₹100.10 for the same stock. One seller hits the bid for 100 shares, so the market maker buys 100 shares for ₹10,000. Later, a buyer lifts the ask for those 100 shares, giving the market maker ₹10,010.</p>
+<p>Its <strong>gross spread capture</strong> is ₹10, before fees, hedging costs and any other expenses. This is an example, not a promise that a market maker will get both executions at those prices.</p>
+<p>The catch is that the market maker may buy stock and then watch its price fall. Or it may sell stock and watch the price rise before it can replenish inventory. The market doesn't owe anyone a round trip.</p>
+<h2>Inventory risk: the unsold-book problem, only faster</h2>
+<p>Market makers hold <strong>inventory</strong>, meaning positions in the assets they trade. That inventory fluctuates in value.</p>
+<p>Suppose our market maker buys 100 shares at ₹100.00. Before anyone buys them back, unexpected news arrives and the best market price drops to ₹99.70. Selling the inventory at ₹99.70 would produce a ₹30 loss on the shares, far larger than the ₹10 gross spread in the earlier ideal example.</p>
+<p>It might be tempting to say, “Just wait until the price recovers.” But market makers are not normally trying to build long-term conviction portfolios with every fill. They manage many exposures, capital constraints and limits. Waiting can compound risk.</p>
+<p>This is <strong>inventory risk</strong>: the danger that the value of positions changes adversely before they can be offset or hedged.</p>
+<h2>Adverse selection: when the other trader knows more</h2>
+<p>There's another risk hiding in the order flow. Imagine a market maker posts an ask of ₹100.10. A rapidly moving buyer trades against it just before significant information pushes the market price to ₹100.50. The market maker's sale now looks cheap relative to the new market.</p>
+<p>The trader on the other side might have better information, a faster reaction or simply fortunate timing. In market microstructure, this problem is often discussed as <strong>adverse selection</strong>: liquidity providers are more likely to be hit at moments when their quotes are stale or mispriced.</p>
+<p>This is one reason spreads can widen during volatile periods or around major announcements. The risk of quoting a bad price rises, so market makers may demand more compensation or reduce the quantity they are willing to trade.</p>
+<p>A wider spread isn't automatically evidence that someone is cheating customers. It can reflect higher uncertainty and lower competition, though market conduct and venue rules still matter.</p>
+<h2>How market makers actually manage their quotes</h2>
+<p>A basic quoting strategy starts with an estimate of a <strong>fair or reference price</strong>, often informed by the market midpoint, recent trades, related instruments, order-book conditions and risk models. The firm then quotes a bid below and an ask above a chosen reference, balancing expected executions with risk.</p>
+<p>Inventory changes the picture. If the firm has accumulated too much stock, it may lower its quotes to encourage buyers and discourage further purchases. If it is short, it may shift quotes upward to attract sellers and make additional sales less appealing. This is a simplified intuition, not a formula used by every firm.</p>
+<p>Quoting is also constrained by tick sizes, exchange rules, competition, market data latency and the costs of changing orders. High-frequency market makers automate these decisions at speed, but not all market makers use the same technology or strategy.</p>
+<p>A sophisticated firm may hedge unwanted risk using correlated securities, futures or other instruments. Hedging can reduce exposure, but it adds costs and may introduce basis risk, where the hedge and the original position don't move together perfectly.</p>
+<h2>Where the money comes from</h2>
+<p>Market-making economics are more involved than multiplying every trade by the displayed spread.</p>
+<p>One useful decomposition separates <strong>facilitation revenue</strong>, associated with providing liquidity and capturing spreads net of trading costs, from <strong>inventory revenue or losses</strong>, which come from changes in the value of positions and the costs of holding or hedging them. The Bank for International Settlements uses a related distinction in its discussion of market-making economics.</p>
+<p>Other considerations include exchange fees or rebates, funding costs, technology, data infrastructure, taxes and operational risk. A firm can earn gross spread on some trades while losing money overall.</p>
+<p>And the <strong>quoted spread</strong> is not necessarily the <strong>realized spread</strong>. If prices move after a trade, the economic gain from providing liquidity may be much smaller than the headline bid-ask gap. Traders sometimes measure realized spreads relative to a later midpoint to separate immediate spread capture from subsequent price movement.</p>
+<h2>Why some stocks have tiny spreads and others don't</h2>
+<p>You might see a heavily traded stock with a narrow spread while an obscure stock has a much wider one. Several forces are at work.</p>
+<p><strong>Competition:</strong> More liquidity providers competing for orders can push quotes closer together.</p>
+<p><strong>Trading activity:</strong> Frequent in both directions flow can help market makers offset positions more readily, though volume alone does not guarantee low risk.</p>
+<p><strong>Volatility and uncertainty:</strong> When prices jump unpredictably, stale quotes become dangerous.</p>
+<p><strong>Depth:</strong> The size available near the best prices matters alongside the spread itself. A tight spread for ten shares may be less useful to a trader trying to trade ten thousand.</p>
+<p><strong>Tick size and market rules:</strong> The smallest permitted price increment and venue design can shape quoted spreads.</p>
+<p>Liquidity therefore isn't a single number. A market can have a narrow visible spread but little depth, or substantial displayed depth that disappears when conditions worsen.</p>
+<h2>Market orders versus limit orders</h2>
+<p>The spread also helps explain the choice between market and limit orders.</p>
+<p>A <strong>market order</strong> prioritizes execution, generally accepting the prices available when it reaches the market. In a rapidly moving or thin market, those prices may differ from the latest displayed quote.</p>
+<p>A <strong>limit order</strong> specifies a worst acceptable price. A buyer might place a limit bid at ₹100.00 instead of paying the ₹100.10 ask. That could save spread if the order executes. But the order may remain unfilled, or it may execute just as the fair price is moving down.</p>
+<p>Neither order type is universally superior. One trades off price control against execution certainty; the other can provide price control while sacrificing immediacy.</p>
+<p>The practical lesson is not “always place limit orders.” It is to understand that immediacy has a price and that an unfilled order has its own cost.</p>
+<h2>Are market makers the same as brokers?</h2>
+<p>Not necessarily. A broker generally facilitates a customer's access to markets and handles or routes orders. A market maker supplies buy and sell quotations and may trade as principal, using its own capital. Some financial groups operate multiple business lines, so the distinction is about the <strong>role</strong> in a particular transaction.</p>
+<p>Market makers are also not guaranteed counterparties for every trade. Many exchanges match orders directly between market participants, including other investors and institutions. The structure varies across stocks, bonds, currencies, derivatives and crypto markets.</p>
+<h2>Why market makers matter even if you never meet one</h2>
+<p>Imagine a market with no one prepared to buy until someone else shows up wanting exactly the opposite trade. Selling a small position might take longer, and a large order could move the price sharply. Market makers and other liquidity providers can help reduce that waiting and make transactions easier.</p>
+<p>They do so because providing immediacy can be profitable, not out of generosity. Their business works only when expected compensation adequately covers inventory risk, adverse selection, execution costs and competition.</p>
+<p>The ten-paise gap in our opening example is therefore not just an oddity on a trading screen. It is a visible part of the price of liquidity, and a reminder that every convenient trade has another side willing to take the risk.</p>
+<h2>References and further reading</h2>
+<ol>
+<li>U.S. Securities and Exchange Commission, <em>Spread</em>: https://www.sec.gov/answers/spread.htm</li>
+<li>U.S. Securities and Exchange Commission, <em>Market Centers: Buying and Selling Stock</em>: https://www.sec.gov/answers/market.htm</li>
+<li>Bank for International Settlements, <em>The economics of market-making</em>: https://www.bis.org/publications/economics-market-making</li>
+<li>New York Stock Exchange, <em>Market Making and the NYSE DMM Difference</em>: https://www.nyse.com/data-insights/market-making-and-the-nyse-dmm-difference</li>
+</ol>
+<p><em>Editorial note: All rupee prices and order-book figures are fictional teaching examples. This article is educational and not investment advice.</em></p>
+<p><a href="index.html">← Back to portfolio</a></p></article><footer>© 2026 Jai Limbadiya. Technical and fintech writing.</footer></body></html>
