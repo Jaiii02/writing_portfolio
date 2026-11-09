@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow"><title>Understanding Transformer Architecture: From Tokens to Attention | Portfolio Draft</title><style>*{box-sizing:border-box}body{margin:0;background:#f8f7f4;color:#252622;font-family:Georgia,serif}nav{display:flex;justify-content:space-between;align-items:center;padding:22px max(24px,calc((100vw - 1060px)/2));border-bottom:1px solid #dedbd3;font-family:Arial,sans-serif;gap:16px}nav a{color:inherit;text-decoration:none;margin-right:18px}.brand{font-weight:700;font-size:18px}.wrap{max-width:980px;margin:auto;padding:70px 24px}.eyebrow{font:700 12px Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#796c57}h1{font-size:clamp(38px,6vw,64px);line-height:1.1;letter-spacing:-.04em}h2{font-size:30px;margin-top:52px}h3{font-size:23px}p,li{font-size:18px;line-height:1.75;color:#42433d}a{color:#775e3b}.lead{font-size:24px;max-width:700px}.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-top:40px}.tile{display:block;color:inherit;text-decoration:none;padding:25px;border:1px solid #dcd8ce;border-radius:12px;background:white}.tile h3{margin:8px 0;font-size:22px}.tile p{font-size:15px}.muted{color:#77746d;font:14px Arial,sans-serif}footer{border-top:1px solid #dedbd3;padding:35px max(24px,calc((100vw - 1060px)/2));font:13px Arial,sans-serif;color:#777}article{max-width:800px;margin:auto;padding:65px 24px 100px}article h1{font-size:clamp(36px,5vw,54px)}article p, article li{font-size:18px}article blockquote{border-left:3px solid #a58c64;padding-left:20px;font-style:italic}code{background:#ebe7df;padding:3px 6px;overflow-wrap:anywhere}pre{overflow:auto;padding:16px;background:#ebe7df}pre code{padding:0}table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}td,th{border-bottom:1px solid #dcd8ce;text-align:left;padding:10px 14px}hr{border:0;border-top:1px solid #ddd;margin:40px 0}a:hover{text-decoration:underline}.notice{background:#fff3d8;border:1px solid #dcc48a;padding:12px 16px;border-radius:8px;font:13px Arial,sans-serif;margin:0 0 22px;color:#634c1e}</style></head><body><nav><span class="brand">Jai Limbadiya <span class="muted">/ Writing</span></span><span><a href="index.html">Home</a><a href="index.html#writing">Writing</a><a href="index.html#about">About</a></span></nav><article><div class="notice">Editorial draft. Not yet published. Review before approval.</div><h1>Understanding Transformer Architecture: From Tokens to Attention</h1>
+<p><em>You type “The bank approved my…” into a language model. It suggests “loan.” Sensible. But how did it know that “bank” probably meant a financial institution rather than the edge of a river?</em></p>
+<p>That question leads us into one of the most influential ideas in modern AI: the <strong>Transformer</strong>. It powers many systems that summarize documents, translate languages, answer questions and generate code. And although the mathematics can get intimidating, the intuition begins with something ordinary: words don't mean much without their neighbours.</p>
+<p>Consider the sentence “The dog chased the ball because it was excited.” Most readers understand that “it” probably refers to the dog. Replace <em>excited</em> with <em>round</em>, and suddenly the ball becomes the likely referent. A useful language model must track relationships across a sentence, not just look at one word at a time.</p>
+<p>Transformers are designed to construct those sensitive to context representations efficiently. Let's follow a piece of text through one, from the first token to the final prediction.</p>
+<h2>Before attention, there was a bottleneck</h2>
+<p>Earlier popular sequence models used recurrent neural networks (RNNs) and long short-term memory networks (LSTMs). These processed text step by step, carrying information from earlier tokens forward in a hidden state. That sequential dependence made training difficult to parallelize across positions and could complicate learning distant relationships.</p>
+<p>In 2017, researchers introduced the Transformer in the paper <em>Attention Is All You Need</em>. Their machine-translation architecture replaced recurrence with attention mechanisms and feed-forward layers. The idea was not that every problem in language had been solved. It was that a model could examine relationships between positions without processing those positions through a recurrent chain.</p>
+<p>The result was an architecture that proved remarkably adaptable. Today's large language models vary substantially, but attention-based Transformer blocks remain a defining building block.</p>
+<h2>Step 1: Break text into tokens</h2>
+<p>A model doesn't begin with words in the human sense. A <strong>tokenizer</strong> turns text into token IDs drawn from a fixed vocabulary. Depending on the tokenizer, a token might represent a whole word, part of a word, punctuation or a containing a space fragment.</p>
+<p>For a simplified illustration, imagine the phrase:</p>
+<p><code>The river bank was crowded</code></p>
+<p>It might be represented as five tokens, but an actual tokenizer could divide it differently. Each token is assigned an integer ID. Those IDs are only identifiers, not numerical measures of meaning. Token 204 isn't inherently twice as meaningful as token 102.</p>
+<p>Tokenization matters because the model's context window and processing costs are typically measured in tokens. It also affects how unusual names, code and multilingual text are represented. A tokenizer that turns a technical identifier into several pieces can still handle it, but the model has more pieces to reason over.</p>
+<h2>Step 2: Give each token a vector</h2>
+<p>The token ID is used to look up an <strong>embedding</strong>: a learned list of numbers. If the model's hidden dimension is 768, for example, the embedding for each position has 768 components. The precise dimensions depend on the model.</p>
+<p>Think of embeddings as a working numerical representation, not a neat dictionary in which one coordinate means “finance” and another means “water.” Their meaning is distributed across many dimensions, and those representations change as the model processes context.</p>
+<p>At this stage, “bank” has a starting vector. It hasn't yet been fully interpreted in relation to <em>river</em>. That happens through the layers that follow.</p>
+<p>There is another problem: if we simply handed a model a bag of token embeddings, how would it know which came first? “Dog bites man” and “Man bites dog” use the same words but tell rather different stories.</p>
+<h2>Step 3: Add position information</h2>
+<p>Transformers need some mechanism for representing order. The original 2017 architecture added positional encodings to token embeddings; its paper explored sinusoidal encodings. Modern models use different approaches, including learned positional embeddings and rotary positional embeddings (RoPE).</p>
+<p>The implementation differs, but the purpose is similar: make order and relative position available to the model.</p>
+<p>The input to a Transformer layer is therefore more than an isolated word embedding. It carries token identity and position information. Now the interesting part begins.</p>
+<h2>Step 4: Self-attention lets tokens consult their neighbours</h2>
+<p>Suppose the model sees:</p>
+<blockquote>
+<p>She sat by the bank and watched the boats.</p>
+</blockquote>
+<p>When producing the representation for <em>bank</em>, it helps to consult <em>boats</em> and <em>sat by</em>. In a different sentence, <em>bank</em> might attend to <em>loan</em> and <em>interest</em>. <strong>Self-attention</strong> is a learned mechanism for combining information across token positions according to how useful other positions appear for the current one.</p>
+<p>Imagine a group project in which every student gets a chance to ask the others for relevant information. The students aren't literally asking questions in English, but the analogy helps explain the three learned projections in attention.</p>
+<h3>Query, Key and Value without the mystery</h3>
+<p>For each input vector, the model computes three new vectors through learned linear transformations:</p>
+<ul>
+<li>A <strong>Query (Q)</strong> expresses what information a position is looking for.</li>
+<li>A <strong>Key (K)</strong> represents information that other positions can match against.</li>
+<li>A <strong>Value (V)</strong> carries the information to combine if that position is attended to.</li>
+</ul>
+<p>A position's query is compared with the keys of positions it is allowed to see. Higher compatibility scores usually translate into larger attention weights after normalization. Those weights determine how strongly the value vectors contribute to the position's updated representation.</p>
+<p>This isn't a literal database query, and a high attention weight shouldn't be treated as a perfect explanation of a model's reasoning. It's a useful computational description.</p>
+<p>The standard scaled dot-product attention equation is:</p>
+<p><code>Attention(Q, K, V) = softmax(QKᵀ / √dₖ) V</code></p>
+<p>The dot products measure query-key compatibility. Dividing by the square root of the key dimension helps keep scores from becoming too large. The softmax converts scores into zero or positive weights that sum to one across the eligible positions. Multiplying by V produces weighted combinations of information.</p>
+<h3>A tiny made-up attention example</h3>
+<p>Suppose the current position is <em>bank</em> in our boating sentence. To keep the arithmetic easy, imagine its attention scores lead to weights of 0.60 for <em>boats</em>, 0.25 for <em>sat</em>, and 0.15 for <em>bank</em> itself. The model combines the three corresponding value vectors using these weights.</p>
+<p>That does <strong>not</strong> mean real Transformers use these exact numbers, or that a single head always locks onto the obvious to a reader clue. The example simply shows what weighted combination means. In practice, attention is learned from data and spread across many heads and layers.</p>
+<h2>Step 5: Multi-head attention looks for different relationships</h2>
+<p>One attention pattern has limited room to represent every useful relationship in a sentence. The Transformer therefore uses <strong>multi-head attention</strong>: several attention operations run on different learned projections, and their outputs are combined.</p>
+<p>In our sentence, one head might respond strongly to nearby syntax while another picks up a more distant relationship. But a head is not assigned a permanent easy to interpret job. These patterns are emergent and often messier than explanatory diagrams suggest.</p>
+<p>After each head forms its output, the model concatenates the results and projects them back into the model's hidden dimension. The resulting vector contains contextual information assembled from several attention perspectives.</p>
+<p>This is the architecture's defining move: each token's representation can become sensitive to other tokens, even when they are far apart in the sequence.</p>
+<h2>Step 6: Feed-forward networks do a different job</h2>
+<p>Attention gathers and mixes information <strong>across positions</strong>. What happens next is often a position-wise <strong>feed-forward network</strong>, usually a sequence of learned linear transformations with a nonlinear activation in between.</p>
+<p>If attention is the meeting where everyone exchanges information, the feed-forward network is the part where each participant processes what they've heard. The same feed-forward weights are applied independently at each token position, though each position now contains different contextual information.</p>
+<p>Transformer blocks also use residual connections and normalization. Residual connections help information and gradients travel through deep networks; normalization helps keep training stable. The precise arrangement of these components varies across architectures.</p>
+<p>One block isn't usually the end of the story. Models stack many blocks, repeatedly transforming token representations. Earlier layers may capture certain local relationships, while later layers can combine information into more abstract features. Those tendencies are not rigid rules.</p>
+<h2>The original Transformer had an encoder and a decoder</h2>
+<p>The original machine-translation architecture had two major parts.</p>
+<p><strong>Encoder:</strong> It read the input sequence using self-attention that could consider the full available input. The output was a sequence of rich in contextual information representations.</p>
+<p><strong>Decoder:</strong> It generated the output sequence one token at a time. Its masked self-attention prevented positions from using future output tokens. It also used <strong>cross-attention</strong> to consult the encoder's output, allowing the generated translation to depend on the source sentence.</p>
+<p>For translation, this makes intuitive sense. An encoder reads “Where is the station?” and the decoder produces a corresponding sentence in another language while consulting what the encoder understood.</p>
+<p>But not every model you encounter today has that full arrangement.</p>
+<h2>Encoder-only, decoder-only and encoder-decoder models</h2>
+<p>Three common families help explain how Transformers have evolved.</p>
+<p><strong>Encoder-only models</strong>, such as BERT-style systems, are typically useful for tasks involving representations of input text. Bidirectional attention allows token positions to incorporate left and right context. Common applications include classification and extracting information.</p>
+<p><strong>Decoder-only models</strong>, including GPT-style language models, use <strong>causal attention</strong> during generation. A position can attend to itself and preceding tokens, but not future tokens. That restriction matches the next-token prediction task: the model cannot peek at the answer it is supposed to predict.</p>
+<p><strong>Encoder-decoder models</strong>, such as T5-style architectures, retain separate input processing and output generation components. They suit many sequence-to-sequence tasks, including translation and certain summarization setups.</p>
+<p>The boundaries are not always perfect, and modern systems add architectural and training variations. Still, this three category classification is a very useful map.</p>
+<h2>How does a decoder-only LLM actually write a sentence?</h2>
+<p>Let's return to our opening prompt:</p>
+<p><code>The bank approved my</code></p>
+<p>A decoder-only model processes the tokens through its Transformer stack. At the final position, an output projection produces a score, called a <strong>logit</strong>, for each possible next token. Those logits are converted into a probability distribution. A decoding strategy selects the next token, perhaps “loan,” depending on the model and settings.</p>
+<p>That token is appended to the context, and the process repeats to produce the following token. Generation continues until a stopping condition is met. This is why an LLM produces text sequentially at inference time, even though much of its training computation can run across many token positions in parallel.</p>
+<p>There is no tiny person inside the network completing the sentence. Nor is it simply copying the most frequent phrase. Its learned parameters and current context shape the next-token distribution. This process can support surprisingly sophisticated behavior, but it also explains why plausible language isn't automatically reliable knowledge.</p>
+<h2>What attention does well, and what it doesn't fix</h2>
+<p>Self-attention allows direct interactions between positions, making distant dependencies easier to model than in many recurrent designs. The architecture also maps well to modern parallel computing hardware.</p>
+<p>The trade-off is that standard full self-attention forms scores between pairs of sequence positions. For sequence length <em>n</em>, that score matrix scales roughly as <em>n²</em> in size. Efficient implementations and alternative attention methods can reduce practical memory or compute costs, but long contexts remain an engineering challenge.</p>
+<p>And attention is not a fact checker. A model can use context effectively while still making unsupported claims. Training objectives, data quality, retrieval systems, evaluation and safety controls all matter.</p>
+<h2>The simplest way to remember the Transformer</h2>
+<p>A Transformer begins with token IDs, turns them into vectors, incorporates order, and repeatedly updates each vector using attention and feed-forward computation. For generating text, a decoder-style model converts the final representation into probabilities for the next token and repeats.</p>
+<p>The big shift was moving from “read the sentence one step at a time” toward “learn which parts of the available context matter to each position.” That is a powerful idea, even if the details take longer than a coffee break to appreciate.</p>
+<p>The next time a model distinguishes a river bank from a bank loan, you know the broad machinery behind the choice. It isn't looking up a fixed definition. It's building sensitive to context representations, one layer after another.</p>
+<h2>References and further reading</h2>
+<ol>
+<li>Vaswani et al., <em>Attention Is All You Need</em> (2017): https://arxiv.org/abs/1706.03762</li>
+<li>Hugging Face, <em>How do Transformers work?</em>: https://huggingface.co/docs/course/chapter1/4</li>
+<li>Hugging Face, <em>How Transformers solve tasks</em>: https://huggingface.co/docs/course/chapter1/5</li>
+</ol>
+<p><em>Editorial note: The example attention weights are illustrative, not measurements from a trained model. This article is a conceptual explainer rather than an implementation tutorial.</em></p>
+<p><a href="index.html">← Back to portfolio</a></p></article><footer>© 2026 Jai Limbadiya. Technical and fintech writing.</footer></body></html>
